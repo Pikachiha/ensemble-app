@@ -11,10 +11,13 @@ export function useOrganization() {
   }, [])
 
   async function fetchOrganization() {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) { setOrganization(null); setLoading(false); return }
     const { data } = await supabase
       .from('organizations')
       .select('*')
-      .single()
+      .eq('owner_id', user.id)
+      .maybeSingle()
     setOrganization(data)
     setLoading(false)
   }
