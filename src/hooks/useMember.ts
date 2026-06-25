@@ -14,22 +14,26 @@ export function useMember(userId: string | undefined, userEmail: string | undefi
 
   async function findOrLinkMember() {
     // auth_user_id で検索
-    const { data: byId } = await supabase
+    const { data: byId, error: errById } = await supabase
       .from('members')
       .select('*')
       .eq('auth_user_id', userId!)
       .maybeSingle()
 
+    console.log('[useMember] byId:', byId, 'error:', errById)
+
     if (byId) { setMember(byId); setLoading(false); return }
 
     // メールアドレスで検索してauto-link
     if (userEmail) {
-      const { data: byEmail } = await supabase
+      const { data: byEmail, error: errByEmail } = await supabase
         .from('members')
         .select('*')
         .eq('email', userEmail)
         .is('auth_user_id', null)
         .maybeSingle()
+
+      console.log('[useMember] byEmail:', byEmail, 'error:', errByEmail)
 
       if (byEmail) {
         const { data: linked } = await supabase
