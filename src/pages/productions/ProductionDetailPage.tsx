@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { useProductions } from '../../hooks/useProductions'
 import type { Production } from '../../types'
@@ -26,9 +26,8 @@ const TAB_LABELS: Record<Tab, string> = {
 
 export default function ProductionDetailPage() {
   const { id } = useParams<{ id: string }>()
-  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
-  const { updateProduction, removeProduction } = useProductions()
+  const { updateProduction } = useProductions()
   const [production, setProduction] = useState<Production | null>(null)
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -52,14 +51,7 @@ export default function ProductionDetailPage() {
     setModalOpen(false)
   }
 
-  const handleDelete = async () => {
-    if (!confirm(`「${production?.name}」を削除しますか？関連するシーン・スケジュールも削除されます。`)) return
-    await supabase.from('productions').delete().eq('id', id!)
-    removeProduction(id!)
-    navigate('/')
-  }
-
-  if (loading) return <div className="p-8 text-sm text-[#666666]">読み込み中...</div>
+if (loading) return <div className="p-8 text-sm text-[#666666]">読み込み中...</div>
   if (!production) return <div className="p-8 text-sm text-[#666666]">演目が見つかりません</div>
 
   const isFullWidth = FULL_WIDTH_TABS.includes(activeTab)

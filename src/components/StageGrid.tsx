@@ -5,6 +5,8 @@
  * - 1間 = 180cm として小道具サイズを換算
  */
 
+import React from 'react'
+
 /** 1間あたりのSVGピクセル数（縦横共通） */
 export const PX_PER_KEN = 80
 
@@ -34,7 +36,7 @@ export function StageGrid({ cw, ch, widthKen, depthKen, scale = 1 }: StageGridPr
   const da = (a: number, b: number) => `${a / scale} ${b / scale}` // strokeDasharray
 
   // 縦線（1間・半間）
-  const vLines: JSX.Element[] = []
+  const vLines: React.ReactElement[] = []
   const totalHalfV = Math.ceil(widthKen * 2)
   for (let i = 0; i <= totalHalfV; i++) {
     const x = i * halfX
@@ -50,7 +52,7 @@ export function StageGrid({ cw, ch, widthKen, depthKen, scale = 1 }: StageGridPr
   }
 
   // 横線（1間・半間）
-  const hLines: JSX.Element[] = []
+  const hLines: React.ReactElement[] = []
   const totalHalfH = Math.ceil(depthKen * 2)
   for (let i = 0; i <= totalHalfH; i++) {
     const y = i * halfY
@@ -67,7 +69,7 @@ export function StageGrid({ cw, ch, widthKen, depthKen, scale = 1 }: StageGridPr
 
   // バミリ番号（中央0、半間ごとに外側へ1,2,3...）
   const centerX = cw / 2
-  const bamiNumbers: JSX.Element[] = []
+  const bamiNumbers: React.ReactElement[] = []
   for (let i = 0; i <= totalHalfV; i++) {
     if (i === 0 || i === totalHalfV) continue  // 端のラインは表示しない
     const x = i * halfX

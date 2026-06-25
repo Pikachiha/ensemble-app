@@ -3,7 +3,7 @@ import { X } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
 import type { CastGroup, Member } from '../../../types'
 import TagBadge from '../../../components/TagBadge'
-import TagPicker from '../../../components/TagPicker'
+import TagPicker, { type TagGroup } from '../../../components/TagPicker'
 
 type Props = {
   productionId: string
@@ -23,7 +23,7 @@ export default function CastEntryModal({ productionId, members, groups: initialG
   const [loading, setLoading] = useState(false)
   const pickerRef = useRef<HTMLDivElement>(null)
 
-  const toggleGroup = (group: CastGroup) => {
+  const toggleGroup = (group: TagGroup) => {
     setSelectedGroupIds(prev => {
       const s = new Set(prev)
       s.has(group.id) ? s.delete(group.id) : s.add(group.id)
@@ -31,7 +31,7 @@ export default function CastEntryModal({ productionId, members, groups: initialG
     })
   }
 
-  const handleCreateGroup = async (name: string, color: string): Promise<CastGroup | null> => {
+  const handleCreateGroup = async (name: string, color: string): Promise<TagGroup | null> => {
     const { data } = await supabase
       .from('cast_groups')
       .insert({ production_id: productionId, name, color, order_index: groups.length })
@@ -44,8 +44,8 @@ export default function CastEntryModal({ productionId, members, groups: initialG
     return null
   }
 
-  const handleGroupUpdated = (group: CastGroup) => {
-    setGroups(prev => prev.map(g => g.id === group.id ? group : g))
+  const handleGroupUpdated = (group: TagGroup) => {
+    setGroups(prev => prev.map(g => g.id === group.id ? (group as CastGroup) : g))
   }
 
   const handleGroupDeleted = (id: string) => {

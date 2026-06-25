@@ -22,7 +22,7 @@ type Props = {
 
 export default function SceneModal({
   productionId, scene, orderIndex, groups, initialGroupIds,
-  onSaved, onGroupCreated, onGroupUpdated, onGroupDeleted, onCreate, onClose,
+  onSaved, onGroupCreated: _onGroupCreated, onGroupUpdated, onGroupDeleted, onCreate, onClose,
 }: Props) {
   const [name, setName] = useState(scene?.name ?? '')
   const [selectedGroupIds, setSelectedGroupIds] = useState<Set<string>>(new Set(initialGroupIds))

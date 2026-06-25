@@ -41,7 +41,7 @@ export default function TagPicker({ groups, selectedIds, onToggle, onCreate, onG
   const filtered = groups.filter(g => g.name.toLowerCase().includes(query.toLowerCase()))
   const exactMatch = groups.some(g => g.name === query.trim())
 
-  const handleToggle = (group: CastGroup) => {
+  const handleToggle = (group: TagGroup) => {
     onToggle(group)
     onClose()
   }
