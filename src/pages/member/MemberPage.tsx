@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import type { Attendance, Member, Organization, Production, Schedule } from '../../types'
+import type { Attendance, Member, Production, Schedule } from '../../types'
 
 type Props = { member: Member }
 
@@ -32,7 +32,7 @@ const ALL_STATUSES: AttendanceStatus[] = ['present', 'absent', 'late', 'early_le
 
 export default function MemberPage({ member }: Props) {
   const [schedules, setSchedules] = useState<ScheduleEntry[]>([])
-  const [organization, setOrganization] = useState<Organization | null>(null)
+  const [orgName, setOrgName] = useState<string>('')
   const [loading, setLoading] = useState(true)
   const [editingNotes, setEditingNotes] = useState<string | null>(null)
   const [notesInput, setNotesInput] = useState('')
@@ -41,13 +41,13 @@ export default function MemberPage({ member }: Props) {
   useEffect(() => { fetchData() }, [])
 
   async function fetchData() {
-    const [{ data: prods }, { data: scheds }, { data: atts }, { data: org }] = await Promise.all([
+    const [{ data: prods }, { data: scheds }, { data: atts }, { data: orgName }] = await Promise.all([
       supabase.from('productions').select('*'),
       supabase.from('schedules').select('*').order('date', { ascending: true }),
       supabase.from('attendances').select('*').eq('member_id', member.id),
-      supabase.from('organizations').select('*').eq('id', member.organization_id).single(),
+      supabase.rpc('get_my_organization_name'),
     ])
-    setOrganization(org)
+    setOrgName(orgName ?? '')
 
     const prodMap = Object.fromEntries((prods ?? []).map(p => [p.id, p]))
     const attMap = Object.fromEntries((atts ?? []).map(a => [a.schedule_id, a]))
@@ -106,7 +106,7 @@ export default function MemberPage({ member }: Props) {
       <header className="bg-white border-b border-[#E5E5E5] px-6 py-4 flex items-center justify-between">
         <div>
           <p className="text-xs text-[#999999]">Ensemble</p>
-          <p className="text-sm font-semibold text-[#111111]">{organization?.name ?? ''}</p>
+          <p className="text-sm font-semibold text-[#111111]">{orgName}</p>
         </div>
         <div className="flex items-center gap-4">
           <p className="text-sm text-[#666666]">{member.name}</p>

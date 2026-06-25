@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import type { Member } from '../types'
 
-export function useMember(userId: string | undefined, userEmail: string | undefined) {
+export function useMember(userId: string | undefined, _userEmail?: string | undefined) {
   const [member, setMember] = useState<Member | null>(null)
   const [loading, setLoading] = useState(true)
 
