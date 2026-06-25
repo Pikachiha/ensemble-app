@@ -1,0 +1,19 @@
+@import "tailwindcss";
+
+:root {
+  --sans: system-ui, -apple-system, 'Hiragino Sans', sans-serif;
+  font-family: var(--sans);
+  font-size: 16px;
+  color: #111111;
+  background: #ffffff;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
