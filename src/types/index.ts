@@ -104,6 +104,8 @@ export type ScheduleScene = {
   scene_id: string
 }
 
+export type PropStatus = 'pending' | 'in_progress' | 'ready'
+
 export type Prop = {
   id: string
   production_id: string
@@ -112,6 +114,9 @@ export type Prop = {
   color: string
   default_width: number
   default_height: number
+  status: PropStatus
+  owner: string | null
+  notes: string | null
   created_at: string
 }
 
