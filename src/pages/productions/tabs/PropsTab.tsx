@@ -235,7 +235,6 @@ export default function PropsTab({ production }: Props) {
               <div className="flex items-center justify-between py-1">
                 <div>
                   <p className="text-sm font-medium text-[#111111]">舞台図に表示</p>
-                  <p className="text-xs text-[#999999]">オフにすると舞台図のパレットに表示されません</p>
                 </div>
                 <button
                   onClick={() => setOnStage(v => !v)}
