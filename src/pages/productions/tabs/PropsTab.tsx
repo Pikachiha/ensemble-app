@@ -238,10 +238,10 @@ export default function PropsTab({ production }: Props) {
                 </div>
                 <button
                   onClick={() => setOnStage(v => !v)}
-                  className={`relative w-10 h-6 rounded-full transition-colors cursor-pointer border-none flex-shrink-0 ${onStage ? 'bg-[#4B9EF5]' : 'bg-[#CCCCCC]'}`}
+                  className={`relative w-10 h-6 rounded-full transition-colors cursor-pointer border-none p-0 flex-shrink-0 ${onStage ? 'bg-[#4B9EF5]' : 'bg-[#CCCCCC]'}`}
                 >
                   <span
-                    className="absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform"
+                    className="absolute top-1 left-0 w-4 h-4 bg-white rounded-full shadow transition-transform"
                     style={{ transform: onStage ? 'translateX(20px)' : 'translateX(4px)' }}
                   />
                 </button>
