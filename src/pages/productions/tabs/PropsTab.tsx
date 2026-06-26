@@ -74,7 +74,7 @@ export default function PropsTab({ production }: Props) {
     setEditing(null)
     setName(''); setShape('rect'); setColor('stone')
     setDefaultWidth('60'); setDefaultHeight('40')
-    setStatus('pending'); setOwner(''); setNotes(''); setOnStage(true)
+    setStatus('pending'); setOwner(''); setNotes(''); setOnStage(false)
     setModalOpen(true)
   }
 
@@ -245,46 +245,48 @@ export default function PropsTab({ production }: Props) {
                 </button>
               </div>
 
-              <div className="border-t border-[#E5E5E5] pt-4">
-                {/* 形 */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-[#111111] mb-1.5">形（舞台図用）</label>
-                  <div className="flex gap-2">
-                    {SHAPES.map(s => (
-                      <button key={s.value} onClick={() => setShape(s.value as typeof shape)}
-                        className={`flex-1 py-2 text-sm rounded-lg border cursor-pointer transition-colors ${shape === s.value ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#666666] border-[#E5E5E5] hover:border-[#999999]'}`}>
-                        {s.label}
-                      </button>
-                    ))}
+              {onStage && (
+                <div className="border-t border-[#E5E5E5] pt-4">
+                  {/* 形 */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-[#111111] mb-1.5">形（舞台図用）</label>
+                    <div className="flex gap-2">
+                      {SHAPES.map(s => (
+                        <button key={s.value} onClick={() => setShape(s.value as typeof shape)}
+                          className={`flex-1 py-2 text-sm rounded-lg border cursor-pointer transition-colors ${shape === s.value ? 'bg-[#111111] text-white border-[#111111]' : 'bg-white text-[#666666] border-[#E5E5E5] hover:border-[#999999]'}`}>
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* 色 */}
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-[#111111] mb-1.5">色（舞台図用）</label>
-                  <div className="flex gap-2 flex-wrap">
-                    {TAG_COLORS.map(tc => (
-                      <button key={tc.key} onClick={() => setColor(tc.key)}
-                        className={`w-7 h-7 rounded-full cursor-pointer border-2 transition-all ${color === tc.key ? 'border-[#111111] scale-110' : 'border-transparent hover:border-[#999999]'}`}
-                        style={{ background: tc.border }} />
-                    ))}
+                  {/* 色 */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-[#111111] mb-1.5">色（舞台図用）</label>
+                    <div className="flex gap-2 flex-wrap">
+                      {TAG_COLORS.map(tc => (
+                        <button key={tc.key} onClick={() => setColor(tc.key)}
+                          className={`w-7 h-7 rounded-full cursor-pointer border-2 transition-all ${color === tc.key ? 'border-[#111111] scale-110' : 'border-transparent hover:border-[#999999]'}`}
+                          style={{ background: tc.border }} />
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                {/* サイズ */}
-                <div className="flex gap-3">
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-[#111111] mb-1.5">幅（cm）</label>
-                    <input type="number" value={defaultWidth} onChange={e => setDefaultWidth(e.target.value)} min={1}
-                      className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg outline-none focus:border-[#000000]" />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium text-[#111111] mb-1.5">奥行（cm）</label>
-                    <input type="number" value={defaultHeight} onChange={e => setDefaultHeight(e.target.value)} min={1}
-                      className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg outline-none focus:border-[#000000]" />
+                  {/* サイズ */}
+                  <div className="flex gap-3">
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-[#111111] mb-1.5">幅（cm）</label>
+                      <input type="number" value={defaultWidth} onChange={e => setDefaultWidth(e.target.value)} min={1}
+                        className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg outline-none focus:border-[#000000]" />
+                    </div>
+                    <div className="flex-1">
+                      <label className="block text-sm font-medium text-[#111111] mb-1.5">奥行（cm）</label>
+                      <input type="number" value={defaultHeight} onChange={e => setDefaultHeight(e.target.value)} min={1}
+                        className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg outline-none focus:border-[#000000]" />
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               <div className="flex gap-2 pt-1">
                 <button onClick={() => setModalOpen(false)}
