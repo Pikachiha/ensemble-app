@@ -234,7 +234,7 @@ export default function PropsTab({ production }: Props) {
               {/* 舞台図フラグ */}
               <div className="flex items-center justify-between py-1">
                 <div>
-                  <p className="text-sm font-medium text-[#111111]">舞台図に記載する</p>
+                  <p className="text-sm font-medium text-[#111111]">舞台図に表示</p>
                   <p className="text-xs text-[#999999]">オフにすると舞台図のパレットに表示されません</p>
                 </div>
                 <button
@@ -249,7 +249,7 @@ export default function PropsTab({ production }: Props) {
                 <div className="border-t border-[#E5E5E5] pt-4">
                   {/* 形 */}
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-[#111111] mb-1.5">形（舞台図用）</label>
+                    <label className="block text-sm font-medium text-[#111111] mb-1.5">形</label>
                     <div className="flex gap-2">
                       {SHAPES.map(s => (
                         <button key={s.value} onClick={() => setShape(s.value as typeof shape)}
@@ -262,7 +262,7 @@ export default function PropsTab({ production }: Props) {
 
                   {/* 色 */}
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-[#111111] mb-1.5">色（舞台図用）</label>
+                    <label className="block text-sm font-medium text-[#111111] mb-1.5">色</label>
                     <div className="flex gap-2 flex-wrap">
                       {TAG_COLORS.map(tc => (
                         <button key={tc.key} onClick={() => setColor(tc.key)}
