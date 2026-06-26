@@ -117,6 +117,7 @@ export type Prop = {
   status: PropStatus
   owner: string | null
   notes: string | null
+  on_stage: boolean
   created_at: string
 }
 

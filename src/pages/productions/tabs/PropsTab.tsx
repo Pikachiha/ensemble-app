@@ -59,6 +59,7 @@ export default function PropsTab({ production }: Props) {
   const [status, setStatus] = useState<PropStatus>('pending')
   const [owner, setOwner] = useState('')
   const [notes, setNotes] = useState('')
+  const [onStage, setOnStage] = useState(true)
   const [saving, setSaving] = useState(false)
 
   useEffect(() => { fetchProps() }, [])
@@ -73,7 +74,7 @@ export default function PropsTab({ production }: Props) {
     setEditing(null)
     setName(''); setShape('rect'); setColor('stone')
     setDefaultWidth('60'); setDefaultHeight('40')
-    setStatus('pending'); setOwner(''); setNotes('')
+    setStatus('pending'); setOwner(''); setNotes(''); setOnStage(true)
     setModalOpen(true)
   }
 
@@ -81,7 +82,7 @@ export default function PropsTab({ production }: Props) {
     setEditing(prop)
     setName(prop.name); setShape(prop.shape); setColor(prop.color)
     setDefaultWidth(String(prop.default_width)); setDefaultHeight(String(prop.default_height))
-    setStatus(prop.status ?? 'pending'); setOwner(prop.owner ?? ''); setNotes(prop.notes ?? '')
+    setStatus(prop.status ?? 'pending'); setOwner(prop.owner ?? ''); setNotes(prop.notes ?? ''); setOnStage(prop.on_stage ?? true)
     setModalOpen(true)
   }
 
@@ -95,6 +96,7 @@ export default function PropsTab({ production }: Props) {
       status,
       owner: owner.trim() || null,
       notes: notes.trim() || null,
+      on_stage: onStage,
       production_id: production.id,
     }
     if (editing) {
@@ -154,6 +156,9 @@ export default function PropsTab({ production }: Props) {
                   </p>
                   {prop.owner && (
                     <p className="text-xs text-[#666666]">担当: {prop.owner}</p>
+                  )}
+                  {!prop.on_stage && (
+                    <p className="text-xs text-[#999999]">手持ち</p>
                   )}
                 </div>
                 {prop.notes && (
@@ -224,6 +229,20 @@ export default function PropsTab({ production }: Props) {
                 <textarea value={notes} onChange={e => setNotes(e.target.value)} rows={2}
                   placeholder="例：布を購入済み、縫製中"
                   className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg outline-none focus:border-[#000000] resize-none placeholder-[#BBBBBB]" />
+              </div>
+
+              {/* 舞台図フラグ */}
+              <div className="flex items-center justify-between py-1">
+                <div>
+                  <p className="text-sm font-medium text-[#111111]">舞台図に記載する</p>
+                  <p className="text-xs text-[#999999]">オフにすると舞台図のパレットに表示されません</p>
+                </div>
+                <button
+                  onClick={() => setOnStage(v => !v)}
+                  className={`relative w-10 h-6 rounded-full transition-colors cursor-pointer border-none ${onStage ? 'bg-[#111111]' : 'bg-[#CCCCCC]'}`}
+                >
+                  <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${onStage ? 'translate-x-5' : 'translate-x-1'}`} />
+                </button>
               </div>
 
               <div className="border-t border-[#E5E5E5] pt-4">
