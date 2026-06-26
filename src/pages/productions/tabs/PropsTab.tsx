@@ -15,7 +15,7 @@ const SHAPES = [
 const STATUS_OPTIONS: { value: PropStatus; label: string; style: string }[] = [
   { value: 'pending',     label: '未着手',  style: 'bg-white text-[#999999] border-[#E5E5E5]' },
   { value: 'in_progress', label: '作業中',  style: 'bg-[#FEF3C7] text-[#92400E] border-[#FDE68A]' },
-  { value: 'ready',       label: '用意済み', style: 'bg-[#D1FAE5] text-[#065F46] border-[#6EE7B7]' },
+  { value: 'ready',       label: '済み',    style: 'bg-[#D1FAE5] text-[#065F46] border-[#6EE7B7]' },
 ]
 
 function StatusBadge({ status, onClick }: { status: PropStatus; onClick?: () => void }) {
