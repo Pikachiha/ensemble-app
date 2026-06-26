@@ -104,6 +104,14 @@ export type ScheduleScene = {
   scene_id: string
 }
 
+export type CastRole = {
+  id: string
+  production_member_id: string
+  role_name: string
+  is_main: boolean
+  created_at: string
+}
+
 export type PropStatus = 'pending' | 'in_progress' | 'ready'
 
 export type Prop = {

@@ -1,7 +1,7 @@
-import { useRef, useState } from 'react'
-import { X } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { Plus, Star, Trash2, X } from 'lucide-react'
 import { supabase } from '../../../lib/supabase'
-import type { CastGroup } from '../../../types'
+import type { CastGroup, CastRole } from '../../../types'
 import type { TagGroup } from '../../../components/TagPicker'
 import TagBadge from '../../../components/TagBadge'
 import TagPicker from '../../../components/TagPicker'
@@ -31,7 +31,22 @@ export default function CastDetailModal({
   const [selectedGroupIds, setSelectedGroupIds] = useState<Set<string>>(new Set(cast.groupIds))
   const [tagPickerOpen, setTagPickerOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const pickerRef = useRef<HTMLDivElement>(null)
+
+  const [castRoles, setCastRoles] = useState<CastRole[]>([])
+  const [newRoleName, setNewRoleName] = useState('')
+  const [addingRole, setAddingRole] = useState(false)
+  const newRoleRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => { fetchRoles() }, [cast.id])
+
+  async function fetchRoles() {
+    const { data } = await supabase
+      .from('cast_roles')
+      .select('*')
+      .eq('production_member_id', cast.id)
+      .order('created_at')
+    setCastRoles(data ?? [])
+  }
 
   const toggleGroup = (group: TagGroup) => {
     setSelectedGroupIds(prev => {
@@ -64,6 +79,30 @@ export default function CastDetailModal({
     onSaved(role, selectedGroupIds)
   }
 
+  const addRole = async () => {
+    const name = newRoleName.trim()
+    if (!name) return
+    const isFirst = castRoles.length === 0
+    const { data } = await supabase
+      .from('cast_roles')
+      .insert({ production_member_id: cast.id, role_name: name, is_main: isFirst })
+      .select().single()
+    if (data) setCastRoles(prev => [...prev, data])
+    setNewRoleName('')
+    setAddingRole(false)
+  }
+
+  const deleteRole = async (id: string) => {
+    await supabase.from('cast_roles').delete().eq('id', id)
+    setCastRoles(prev => prev.filter(r => r.id !== id))
+  }
+
+  const toggleMain = async (role: CastRole) => {
+    const updated = castRoles.map(r => ({ ...r, is_main: r.id === role.id ? !r.is_main : r.is_main }))
+    await supabase.from('cast_roles').update({ is_main: !role.is_main }).eq('id', role.id)
+    setCastRoles(updated)
+  }
+
   const handleGroupUpdated = (group: TagGroup) => onGroupUpdated(group as CastGroup)
   const handleGroupDeleted = (id: string) => {
     onGroupDeleted(id)
@@ -71,9 +110,10 @@ export default function CastDetailModal({
   }
 
   const selectedGroups = groups.filter(g => selectedGroupIds.has(g.id))
+  const pickerRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+    <div className="fixed inset-0 bg-black/40 flex items-start justify-center z-50 px-4 pt-16 pb-8 overflow-y-auto">
       <div className="bg-white rounded-xl w-full max-w-md">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E5E5]">
           <h3 className="text-base font-semibold text-[#111111]">キャストを編集</h3>
@@ -83,18 +123,7 @@ export default function CastDetailModal({
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 flex flex-col gap-4">
-          <div>
-            <label className="block text-sm font-medium text-[#111111] mb-1.5">役名（任意）</label>
-            <input
-              type="text"
-              value={roleName}
-              onChange={e => setRoleName(e.target.value)}
-              placeholder="例：主役、ナレーター"
-              autoFocus
-              className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg text-[#111111] placeholder-[#999999] outline-none focus:border-[#000000]"
-            />
-          </div>
-
+          {/* キャスト名（読み取り専用） */}
           <div>
             <label className="block text-sm font-medium text-[#111111] mb-1.5">キャスト</label>
             <div className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg text-[#666666] bg-[#FAFAFA]">
@@ -102,6 +131,80 @@ export default function CastDetailModal({
             </div>
           </div>
 
+          {/* 代表役名（香盤表・舞台図で使用） */}
+          <div>
+            <label className="block text-sm font-medium text-[#111111] mb-1">代表役名</label>
+            <p className="text-xs text-[#999999] mb-1.5">香盤表・舞台図に表示されます</p>
+            <input
+              type="text"
+              value={roleName}
+              onChange={e => setRoleName(e.target.value)}
+              placeholder="例：主役"
+              autoFocus
+              className="w-full px-3 py-2.5 text-sm border border-[#E5E5E5] rounded-lg text-[#111111] placeholder-[#999999] outline-none focus:border-[#000000]"
+            />
+          </div>
+
+          {/* 担当役一覧 */}
+          <div>
+            <label className="block text-sm font-medium text-[#111111] mb-1">担当する役</label>
+            <p className="text-xs text-[#999999] mb-2">衣装の管理に使用します</p>
+            <div className="flex flex-col gap-1 mb-2">
+              {castRoles.map(role => (
+                <div key={role.id} className="flex items-center gap-2 px-3 py-2 border border-[#E5E5E5] rounded-lg">
+                  <span className="flex-1 text-sm text-[#111111]">{role.role_name}</span>
+                  <button
+                    type="button"
+                    onClick={() => toggleMain(role)}
+                    title="メイン役"
+                    className={`p-1 rounded cursor-pointer bg-transparent border-none ${role.is_main ? 'text-[#F59E0B]' : 'text-[#CCCCCC] hover:text-[#F59E0B]'}`}
+                  >
+                    <Star size={13} fill={role.is_main ? 'currentColor' : 'none'} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteRole(role.id)}
+                    className="p-1 text-[#CCCCCC] hover:text-[#EF4444] rounded cursor-pointer bg-transparent border-none"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            {addingRole ? (
+              <div className="flex gap-2">
+                <input
+                  ref={newRoleRef}
+                  autoFocus
+                  type="text"
+                  value={newRoleName}
+                  onChange={e => setNewRoleName(e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); addRole() } if (e.key === 'Escape') setAddingRole(false) }}
+                  placeholder="役名を入力"
+                  className="flex-1 px-3 py-2 text-sm border border-[#E5E5E5] rounded-lg outline-none focus:border-[#000000] placeholder-[#BBBBBB]"
+                />
+                <button type="button" onClick={addRole}
+                  className="px-3 py-2 text-sm bg-[#111111] text-white rounded-lg hover:bg-[#333333] cursor-pointer border-none">
+                  追加
+                </button>
+                <button type="button" onClick={() => setAddingRole(false)}
+                  className="px-3 py-2 text-sm border border-[#E5E5E5] rounded-lg text-[#666666] hover:bg-[#F5F5F5] cursor-pointer bg-white">
+                  取消
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setAddingRole(true)}
+                className="flex items-center gap-1.5 text-xs text-[#999999] hover:text-[#111111] bg-transparent border-none cursor-pointer p-0"
+              >
+                <Plus size={13} />役を追加
+              </button>
+            )}
+          </div>
+
+          {/* グループ */}
           <div>
             <label className="block text-sm font-medium text-[#111111] mb-1.5">グループ（任意）</label>
             <div className="flex flex-wrap gap-1.5 mb-2">
