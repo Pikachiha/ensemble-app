@@ -186,7 +186,7 @@ export default function PropsTab({ production }: Props) {
       )}
 
       {modalOpen && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 px-4">
+        <div className="fixed inset-0 bg-black/40 flex items-start justify-center z-50 px-4 pt-16 pb-8 overflow-y-auto">
           <div className="bg-white rounded-xl w-full max-w-sm max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E5E5] sticky top-0 bg-white">
               <h3 className="text-base font-semibold text-[#111111]">{editing ? '小道具を編集' : '小道具を追加'}</h3>
@@ -238,7 +238,7 @@ export default function PropsTab({ production }: Props) {
                 </div>
                 <button
                   onClick={() => setOnStage(v => !v)}
-                  className={`relative w-10 h-6 rounded-full transition-colors cursor-pointer border-none p-0 flex-shrink-0 ${onStage ? 'bg-[#4B9EF5]' : 'bg-[#CCCCCC]'}`}
+                  className={`relative w-10 h-6 rounded-full transition-colors cursor-pointer border-none p-0 flex-shrink-0 ${onStage ? 'bg-[#111111]' : 'bg-[#CCCCCC]'}`}
                 >
                   <span
                     className="absolute top-1 left-0 w-4 h-4 bg-white rounded-full shadow transition-transform"
